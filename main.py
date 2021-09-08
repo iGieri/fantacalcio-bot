@@ -30,7 +30,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix=".", intents=intents)
 slash = SlashCommand(client, sync_commands=True)
 
-guild_ids = [883429149518221362]
+guild_ids = [883429149518221362, 690908148403404811]
 
 GIORNATA = 2
 
