@@ -247,6 +247,7 @@ async def _live(ctx, squadra):
         
         if not ':x: ' in eventi and player['ruolo'] == 'P':
             eventi += ':gloves: '
+            bonus += 1
 
         # string += f' {ruolo} {player["nome"][0]}{player["nome"][1:].lower()} - {"SV" if player["voto"] == 55.0 else player["voto"]} **{"SV" if player["voto"] == 55.0 else player["voto"]+bonus}** {eventi} \n'
         embedVar.add_field(name="\u200b", value=f'{ruolo} {player["nome"][0]}{player["nome"][1:].lower()} - {"SV" if player["voto"] == 55.0 else player["voto"]} **{"SV" if player["voto"] == 55.0 else player["voto"]+bonus}** {eventi}', inline=False)
