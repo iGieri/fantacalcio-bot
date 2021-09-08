@@ -1,13 +1,38 @@
+
+"""
+
+Fantacalcio Discord Bot
+
+made by Federico PyGera Gerardi
+
+
+TODO:
+
+- Aggiornamento giornata automatico.
+- Campo Avversario in live
+- Comando /partite
+- Comando per i singoli giocatori
+- Comando statistiche squadra
+
+
+"""
+
+
 import discord
 from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option, create_choice
 import requests
 
+
+
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=".", intents=intents)
 slash = SlashCommand(client, sync_commands=True)
 
+guild_ids = [883429149518221362]
+
+GIORNATA = 2
 
 @client.event
 async def on_ready():
@@ -17,11 +42,14 @@ async def on_ready():
 async def on_message(message):
     print(f'Message from {message.author}: {message.content}')  
 
+@client.event
+async def on_guild_join(guild):
+    guild_ids.append(guild)
 
 @slash.slash(
     name="live",
     description="Cerca una squadra e ottieni tutti i suoi voti in diretta!", 
-    guild_ids=[883429149518221362], 
+    guild_ids=guild_ids, 
     options=[
         create_option(
             name='squadra', 
@@ -101,25 +129,11 @@ async def on_message(message):
         )
     ]
 )
-async def test(ctx, squadra):
+async def _live(ctx, squadra):
     
     actual = 0
 
     condition = True
-
-
-    # while condition:
-    #     i = 1
-    #     req = requests.get(f'https://www.fantacalcio.it/api/live/1?g={i}&i=16')
-
-    #     if req.json() == []:
-    #         actual = i
-    #         condition = False
-
-    #     else:
-    #         i += 1
-
-    #     print(i)
 
     req = requests.get(f'https://www.fantacalcio.it/api/live/{squadra}?g=2&i=16')
 
