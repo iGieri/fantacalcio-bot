@@ -13,6 +13,7 @@ TODO:
 - Comando /partite
 - Comando per i singoli giocatori
 - Comando statistiche squadra
+- Trovare Salernitana, Spezia e Venezia
 
 
 """
@@ -30,7 +31,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix=".", intents=intents)
 slash = SlashCommand(client, sync_commands=True)
 
-guild_ids = [883429149518221362, 690908148403404811]
+guild_ids = []
 
 GIORNATA = 2
 
@@ -42,14 +43,10 @@ async def on_ready():
 async def on_message(message):
     print(f'Message from {message.author}: {message.content}')  
 
-@client.event
-async def on_guild_join(guild):
-    guild_ids.append(guild)
 
 @slash.slash(
     name="live",
     description="Cerca una squadra e ottieni tutti i suoi voti in diretta!", 
-    guild_ids=guild_ids, 
     options=[
         create_option(
             name='squadra', 
