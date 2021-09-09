@@ -24,16 +24,16 @@ from discord.ext import commands
 from discord_slash import SlashCommand
 from discord_slash.utils.manage_commands import create_option, create_choice
 import requests
+import datetime
 
+GIORNATA = 2
+FOOTBALL_API_HEADERS = {"apikey": "471a2be0-1178-11ec-aa3b-6d04c0326cac"}
 
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=".", intents=intents)
 slash = SlashCommand(client, sync_commands=True)
 
-guild_ids = []
-
-GIORNATA = 2
 
 @client.event
 async def on_ready():
@@ -254,5 +254,47 @@ async def _live(ctx, squadra):
 
     await ctx.send(embed=embedVar)
 
+@slash.slash(
+    name="matches",
+    description="Guarda i risultati delle partite in diretta!", 
+    guild_ids=[883429149518221362, 690908148403404811]
+)
+async def _matches(ctx):
+
+    my_round = {}
+
+    params = (
+        ("season_id","2100"),
+    )
+
+    rounds = requests.get('https://app.sportdataapi.com/api/v1/soccer/rounds', headers=FOOTBALL_API_HEADERS, params=params).json()
+
+    for rund in rounds['data']:
+        if rund['is_current']:
+            my_round = { 'name': rund['name'], 'id': rund['round_id'] }
+    
+    matches_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/matches', headers=FOOTBALL_API_HEADERS, params=params).json()
+
+    matches = []
+
+    for match in matches_req['data']:
+        if match['round']['is_current']:
+            matches.append(match)
+    
+    matches.sort(key=lambda match: datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S'))
+
+    embedVar = discord.Embed(
+        title=f'{my_round["name"]}a Giornata di Serie A TIM',
+        color=0x00197d
+    )
+
+    embedVar.set_thumbnail(url="https://www.legaseriea.it/assets/legaseriea/images/logo_main_seriea.png?v=34")
+
+    for match in matches:
+        # embedVar.add_field(name="\u200b", value=f" {match['home_team']['name']} {f'''{match['stats']['home_score']} - {match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}", inline=False)
+        embedVar.add_field(name=f"{(datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=2)).strftime('%H:%M %d/%m/%Y') if match['status_code'] == 0 else f''':red_circle: LIVE {match['minute']}''' if match['status_code'] == 1 else ':clock10: Primo Tempo' if match['status_code'] == 11 else 'Partita Terminata'}", value=f"{str(discord.utils.get(client.emojis, name=match['home_team']['short_code']))} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['home_team']['name']} {f'''{match['stats']['home_score']} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '} - {'**'if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}{'**' if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '} {str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))}", inline=False)
+        # print(f"{str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))} OK")
+
+    await ctx.send(embed=embedVar)
 
 client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs')
