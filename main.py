@@ -266,12 +266,6 @@ async def _matches(ctx):
     params = (
         ("season_id","2100"),
     )
-
-    rounds = requests.get('https://app.sportdataapi.com/api/v1/soccer/rounds', headers=FOOTBALL_API_HEADERS, params=params).json()
-
-    for rund in rounds['data']:
-        if rund['is_current']:
-            my_round = { 'name': rund['name'], 'id': rund['round_id'] }
     
     matches_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/matches', headers=FOOTBALL_API_HEADERS, params=params).json()
 
@@ -279,6 +273,7 @@ async def _matches(ctx):
 
     for match in matches_req['data']:
         if match['round']['is_current']:
+            my_round = { 'name': match['round']['name'], 'id': match['round']['round_id'] }
             matches.append(match)
     
     matches.sort(key=lambda match: datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S'))
