@@ -10,11 +10,10 @@ TODO:
 
 - Aggiornamento giornata automatico.
 - Campo Avversario in live
-- Comando /partite
 - Comando per i singoli giocatori
 - Comando statistiche squadra
 - Trovare Salernitana, Spezia e Venezia
-
+- Comando Help
 
 """
 
@@ -256,8 +255,7 @@ async def _live(ctx, squadra):
 
 @slash.slash(
     name="matches",
-    description="Guarda i risultati delle partite in diretta!", 
-    guild_ids=[883429149518221362, 690908148403404811]
+    description="Guarda i risultati delle partite in diretta!"
 )
 async def _matches(ctx):
 
