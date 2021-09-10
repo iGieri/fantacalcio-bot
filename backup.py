@@ -1,11 +1,6 @@
-
 """
-
 Fantacalcio Discord Bot
-
 made by Federico PyGera Gerardi
-
-
 """
 
 
@@ -16,6 +11,7 @@ from discord_slash.utils.manage_commands import create_option, create_choice
 import requests
 import datetime
 
+GIORNATA = 2
 FOOTBALL_API_HEADERS = {"apikey": "471a2be0-1178-11ec-aa3b-6d04c0326cac"}
 
 
@@ -207,12 +203,12 @@ async def _live(ctx, squadra):
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/395.png"
     
-    description = '*'
+    description = ''
 
     if req.json() == []:
         description += 'Non sono ancora disponibili i dati della '
 
-    description += f'{my_round["name"]}a giornata Serie A TIM*'
+    description += f'*{my_round["name"]}a giornata Serie A TIM*'
 
     embedVar = discord.Embed(
         title=title,
@@ -239,7 +235,6 @@ async def _live(ctx, squadra):
 
             '''
             Eventi:
-
             1: Cartellino Giallo
             2: Cartellino Rosso
             3: Gol Fatto
@@ -247,7 +242,6 @@ async def _live(ctx, squadra):
             14: Esce Giocatore
             15: Entra Giocatore
             22: Assist Normale
-
             '''
 
             eventi = ''
@@ -318,8 +312,7 @@ async def _matches(ctx):
 
 @slash.slash(
     name="invite",
-    description="Invita il bot nel tuo server!",
-    guild_ids=[883429149518221362]
+    description="Invita il bot nel tuo server!"
 )
 async def _invite(ctx):
     embedVar = discord.Embed(
@@ -336,8 +329,7 @@ async def _invite(ctx):
 
 @slash.slash(
     name="help",
-    description="Elenco di tutti i comandi disponibili",
-    guild_ids=[883429149518221362]
+    description="Elenco di tutti i comandi disponibili"
 )
 async def _help(ctx):
     embedVar = discord.Embed(
