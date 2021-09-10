@@ -319,7 +319,6 @@ async def _matches(ctx):
 @slash.slash(
     name="invite",
     description="Invita il bot nel tuo server!",
-    guild_ids=[883429149518221362]
 )
 async def _invite(ctx):
     embedVar = discord.Embed(
@@ -336,8 +335,7 @@ async def _invite(ctx):
 
 @slash.slash(
     name="help",
-    description="Elenco di tutti i comandi disponibili",
-    guild_ids=[883429149518221362]
+    description="Elenco di tutti i comandi disponibili",   
 )
 async def _help(ctx):
     embedVar = discord.Embed(
