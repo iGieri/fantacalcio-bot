@@ -26,6 +26,7 @@ slash = SlashCommand(client, sync_commands=True)
 
 @client.event
 async def on_ready():
+    await client.change_presence(status=discord.Status.idle, activity=discord.Game('/help'))
     print(f'Logged on as 🧙⚽🤖#2397')
 
 @client.event
