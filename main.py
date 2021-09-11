@@ -11,111 +11,27 @@ made by Federico PyGera Gerardi
 
 import discord
 from discord.ext import commands
-from discord_slash import SlashCommand
-from discord_slash.utils.manage_commands import create_option, create_choice
 import requests
 import datetime
 
 FOOTBALL_API_HEADERS = {"apikey": "471a2be0-1178-11ec-aa3b-6d04c0326cac"}
 
 
-intents = discord.Intents.all()
-client = commands.Bot(command_prefix=".", intents=intents)
-slash = SlashCommand(client, sync_commands=True)
-
+client = commands.Bot(command_prefix="f!")
+client.remove_command("help")
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.idle, activity=discord.Game('/help'))
+    await client.change_presence(status=discord.Status.idle, activity=discord.Game('f!help'))
     print(f'Logged on as 🧙⚽🤖#2397')
 
 @client.event
 async def on_message(message):
     print(f'Message from {message.author}: {message.content}')  
+    await client.process_commands(message)
 
 
-@slash.slash(
-    name="live",
-    description="Cerca una squadra e ottieni tutti i suoi voti in diretta!", 
-    options=[
-        create_option(
-            name='squadra', 
-            description='nome della squadra',
-            required=True,
-            option_type=3,
-            choices=[
-                create_choice(
-                    name='Atalanta',
-                    value='1'
-                ),
-                create_choice(
-                    name='Bologna',
-                    value='2'
-                ),
-                create_choice(
-                    name='Empoli',
-                    value='5'
-                ),
-                create_choice(
-                    name='Fiorentina',
-                    value='6'
-                ),
-                create_choice(
-                    name='Genoa',
-                    value='7'
-                ),
-                create_choice(
-                    name='Inter',
-                    value='9'
-                ),
-                create_choice(
-                    name='Juventus',
-                    value='10'
-                ),
-                create_choice(
-                    name='Lazio',
-                    value='11'
-                ),
-                create_choice(
-                    name='Milan',
-                    value='12'
-                ),
-                create_choice(
-                    name='Napoli',
-                    value='13'
-                ),
-                create_choice(
-                    name='Roma',
-                    value='15'
-                ),
-                create_choice(
-                    name='Sampdoria',
-                    value='16'
-                ),
-                create_choice(
-                    name='Sassuolo',
-                    value='17'
-                ),
-                create_choice(
-                    name='Torino',
-                    value='18'
-                ),
-                create_choice(
-                    name='Udinese',
-                    value='19'
-                ),
-                create_choice(
-                    name='Verona',
-                    value='20'
-                ),
-                create_choice(
-                    name='Cagliari',
-                    value='21'
-                )
-            ]
-        )
-    ]
-)
+@client.command(name='live')
 async def _live(ctx, squadra):
     
     actual = 0
@@ -139,71 +55,71 @@ async def _live(ctx, squadra):
     title = ''
     logo = ''
 
-    if squadra == '1':
+    if squadra == 'Atalanta':
         title = 'Atalanta :black_circle::blue_circle:'
         color = 0x0034ad
         logo = 'https://cdn.sportdataapi.com/images/soccer/teams/100/109.png'
-    elif squadra == '2':
+    elif squadra == 'Bologna':
         title = 'Bologna :red_circle::blue_circle:'
         color = 0xad0031
         logo = 'https://cdn.sportdataapi.com/images/soccer/teams/100/400.png'
-    elif squadra == '5':
+    elif squadra == 'Empoli':
         title = 'Empoli :blue_circle:'
         color = 0x0045ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/2345.png"
-    elif squadra == '6':
+    elif squadra == 'Fiorentina':
         title = 'Fiorentina :purple_circle:'
         color = 0x5c00ad
         logo = 'https://cdn.sportdataapi.com/images/soccer/teams/100/389.png'
-    elif squadra == '7':
+    elif squadra == 'Genoa':
         title = 'Genoa :red_circle::blue_circle:'
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/402.png"
-    elif squadra == '9':
+    elif squadra == 'Inter':
         title = 'Inter :black_circle::blue_circle:'
         color = 0x0034ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/94.png"
-    elif squadra == '10':
+    elif squadra == 'Juventus':
         title = 'Juventus :white_circle::black_circle:'
         color = 0xbfbfbf
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/108.png"
-    elif squadra == '11':
+    elif squadra == 'Lazio':
         title = 'Lazio :blue_circle::white_circle:'
         color = 0x0088c2
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/398.png"
-    elif squadra == '12':
+    elif squadra == 'Milan':
         title = 'Milan :red_circle::black_circle:'
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/391.png"
-    elif squadra == '13':
+    elif squadra == 'Napoli':
         title = 'Napoli :blue_circle:'
         color = 0x0034ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/102.png"
-    elif squadra == '15':
+    elif squadra == 'Roma':
         title = 'Roma :orange_circle::red_circle:'
         color = 0xd46a00
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/401.png"
-    elif squadra == '16':
+    elif squadra == 'Sampdoria':
         title = 'Sampdoria :blue_circle::white_circle::red_circle:'
         color = 0x0034ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/397.png"
-    elif squadra == '17':
+    elif squadra == 'Sassuolo':
         title = 'Sassuolo :green_circle::black_circle:'
         color = 0x00a838
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/394.png"
-    elif squadra == '18':
+    elif squadra == 'Torino':
         title = 'Torino :brown_circle:'
         color = 0x913000
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/393.png"
-    elif squadra == '19':
+    elif squadra == 'Udinese':
         title = 'Udinese :black_circle::white_circle:'
         color = 0xbfbfbf
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/390.png"
-    elif squadra == '20':
+    elif squadra == 'Verona':
         title = 'Verona :yellow_circle::blue_circle:'
         color = 0xd4e300
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/399.png"
-    elif squadra == '21':
+    elif squadra == 'Cagliari':
         title = 'Cagliari :red_circle::blue_circle:'
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/395.png"
@@ -280,12 +196,10 @@ async def _live(ctx, squadra):
 
             embedVar.add_field(name="\u200b", value=f'{ruolo} {player["nome"][0]}{player["nome"][1:].lower()} - {"SV" if player["voto"] == 55.0 else player["voto"]} **{"SV" if player["voto"] == 55.0 else player["voto"]+bonus}** {eventi}', inline=False)
 
-    await ctx.send(embed=embedVar)
+    await ctx.reply(embed=embedVar, mention_author=False)
 
-@slash.slash(
-    name="matches",
-    description="Guarda i risultati delle partite in diretta!"
-)
+
+@client.command(name='matches')
 async def _matches(ctx):
 
     my_round = {}
@@ -294,11 +208,11 @@ async def _matches(ctx):
         ("season_id","2100"),
     )
     
-    matches_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/matches', headers=FOOTBALL_API_HEADERS, params=params).json()
+    matches_req = requests.get('https://fantacalcio-c72f0-default-rtdb.europe-west1.firebasedatabase.app/data.json').json()
 
     matches = []
 
-    for match in matches_req['data']:
+    for match in matches_req:
         if match['round']['is_current']:
             my_round = { 'name': match['round']['name'], 'id': match['round']['round_id'] }
             matches.append(match)
@@ -313,14 +227,43 @@ async def _matches(ctx):
     embedVar.set_thumbnail(url="https://www.legaseriea.it/assets/legaseriea/images/logo_main_seriea.png?v=34")
 
     for match in matches:
-        embedVar.add_field(name=f"{(datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=2)).strftime('%H:%M %d/%m/%Y') if match['status_code'] == 0 else f''':red_circle: LIVE {match['minute']}''' if match['status_code'] == 1 else ':clock10: Primo Tempo' if match['status_code'] == 11 else 'Partita Terminata'}", value=f"{str(discord.utils.get(client.emojis, name=match['home_team']['short_code']))} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['home_team']['name']} {f'''{match['stats']['home_score']} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '} - {'**'if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}{'**' if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '} {str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))}", inline=False)
+        embedVar.add_field(name=f"{(datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=2)).strftime('%H:%M %d/%m/%Y') if match['status_code'] == 0 else f''':red_circle: LIVE {match['minute']}' ''' if match['status_code'] == 1 else ':clock10: Primo Tempo' if match['status_code'] == 11 else 'Partita Terminata'}", value=f"{str(discord.utils.get(client.emojis, name=match['home_team']['short_code']))} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['home_team']['name']} {f'''{match['stats']['home_score']} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '} - {'**'if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}{'**' if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '} {str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))}", inline=False)
 
-    await ctx.send(embed=embedVar)
+    message = await ctx.reply(embed=embedVar, mention_author=False)
 
-@slash.slash(
-    name="invite",
-    description="Invita il bot nel tuo server!",
-)
+    bg_task = client.loop.create_task(background_match(message.channel.id, message.id))
+
+async def background_match(channelId, messageId):
+    await client.wait_until_ready()
+    while not client.is_closed():
+        my_round = {}
+        
+        matches_req = requests.get('https://fantacalcio-c72f0-default-rtdb.europe-west1.firebasedatabase.app/data.json').json()
+
+        matches = []
+
+        for match in matches_req:
+            if match['round']['is_current']:
+                my_round = { 'name': match['round']['name'], 'id': match['round']['round_id'] }
+                matches.append(match)
+        
+        matches.sort(key=lambda match: datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S'))
+
+        embedVar = discord.Embed(
+            title=f'{my_round["name"]}a Giornata di Serie A TIM',
+            color=0x00197d
+        )
+
+        embedVar.set_thumbnail(url="https://www.legaseriea.it/assets/legaseriea/images/logo_main_seriea.png?v=34")
+
+        for match in matches:
+            embedVar.add_field(name=f"{(datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=2)).strftime('%H:%M %d/%m/%Y') if match['status_code'] == 0 else f''':red_circle: LIVE {match['minute']}' ''' if match['status_code'] == 1 else ':clock10: Primo Tempo' if match['status_code'] == 11 else 'Partita Terminata'}", value=f"{str(discord.utils.get(client.emojis, name=match['home_team']['short_code']))} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['home_team']['name']} {f'''{match['stats']['home_score']} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '} - {'**'if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}{'**' if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '} {str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))}", inline=False)
+
+        message = await client.get_channel(channelId).fetch_message(messageId)
+        await message.edit(embed = embedVar)
+
+
+@client.command(name='invite')
 async def _invite(ctx):
     embedVar = discord.Embed(
         title='Invita il bot nel tuo server!',
@@ -332,12 +275,10 @@ async def _invite(ctx):
 
     embedVar.add_field(name='Link', value='[Invita](https://discord.com/oauth2/authorize?client_id=883501118863323216&permissions=277025745920&scope=bot%20applications.commands)')
     
-    await ctx.send(embed=embedVar)
+    await ctx.reply(embed=embedVar, mention_author=False)
 
-@slash.slash(
-    name="help",
-    description="Elenco di tutti i comandi disponibili",   
-)
+
+@client.command(name='help')
 async def _help(ctx):
     embedVar = discord.Embed(
         title='Ecco tutti i comandi disponibili!',
@@ -347,13 +288,14 @@ async def _help(ctx):
 
     embedVar.set_thumbnail(url="https://content.fantacalcio.it/web/img/app/fantacalcio.png")
 
-    embedVar.add_field(name='/help', value='Elenco di tutti i comandi disponibili')
-    embedVar.add_field(name='/invite', value='Link per invitare il bot nel proprio server')
-    embedVar.add_field(name='/live <squadra>', value='Mostra i voti live della squadra selezionata')
-    embedVar.add_field(name='/matches', value='Mostra i risultati in diretta della giornata corrente')
-    embedVar.add_field(name='/team', value='Soon...')
-    embedVar.add_field(name='/player', value='Soon...')
+    embedVar.add_field(name='f!help', value='Elenco di tutti i comandi disponibili')
+    embedVar.add_field(name='f!invite', value='Link per invitare il bot nel proprio server')
+    embedVar.add_field(name='f!live <squadra>', value='Mostra i voti live della squadra selezionata')
+    embedVar.add_field(name='f!matches', value='Mostra i risultati in diretta della giornata corrente')
+    embedVar.add_field(name='f!team', value='Soon...')
+    embedVar.add_field(name='f!player', value='Soon...')
     
-    await ctx.send(embed=embedVar)
+    await ctx.reply(embed=embedVar, mention_author=False)
+
 
 client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs')
