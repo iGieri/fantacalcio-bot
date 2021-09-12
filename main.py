@@ -288,5 +288,5 @@ async def _help(ctx):
     await ctx.reply(embed=embedVar, mention_author=False)
 
 
-# client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs') # Good 
-client.run('ODg2MzkxMTA0Mjg1NTgxMzYy.YT06Cw.7ZLU3DkY6QF1_fROm9dDcq59LI0') # Test
+client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs') # Good 
+# client.run('ODg2MzkxMTA0Mjg1NTgxMzYy.YT06Cw.7ZLU3DkY6QF1_fROm9dDcq59LI0') # Test
