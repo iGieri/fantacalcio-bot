@@ -30,6 +30,18 @@ async def on_message(message):
     print(f'Message from {message.author}: {message.content}')  
     await client.process_commands(message)
 
+@client.event
+async def on_reaction_add(reaction, user):
+    if user.id != 883501118863323216:
+        emojis = ["⬅️", "➡️"]
+        if str(reaction.emoji) == emojis[0]:
+            print("INDIETRO")
+            reaction.clear()
+        elif str(reaction.emoji) == emojis[1]:
+            print("AVANTI")
+            reaction.remove(user)
+        else:
+            reaction.remove(user)
 
 @client.command(name='live')
 async def _live(ctx, squadra):
@@ -208,7 +220,7 @@ async def _matches(ctx):
         ("season_id","2100"),
     )
     
-    matches_req = requests.get('https://fantacalcio-c72f0-default-rtdb.europe-west1.firebasedatabase.app/data.json').json()
+    matches_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/matches', headers=FOOTBALL_API_HEADERS, params=params).json()
 
     matches = []
 
@@ -231,36 +243,14 @@ async def _matches(ctx):
 
     message = await ctx.reply(embed=embedVar, mention_author=False)
 
-    bg_task = client.loop.create_task(background_match(message.channel.id, message.id))
+    emojis = ["⬅️", "➡️"]
 
-async def background_match(channelId, messageId):
-    await client.wait_until_ready()
-    while not client.is_closed():
-        my_round = {}
+    for emoji in emojis:
+        await message.add_reaction(emoji)
+
+
         
-        matches_req = requests.get('https://fantacalcio-c72f0-default-rtdb.europe-west1.firebasedatabase.app/data.json').json()
 
-        matches = []
-
-        for match in matches_req:
-            if match['round']['is_current']:
-                my_round = { 'name': match['round']['name'], 'id': match['round']['round_id'] }
-                matches.append(match)
-        
-        matches.sort(key=lambda match: datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S'))
-
-        embedVar = discord.Embed(
-            title=f'{my_round["name"]}a Giornata di Serie A TIM',
-            color=0x00197d
-        )
-
-        embedVar.set_thumbnail(url="https://www.legaseriea.it/assets/legaseriea/images/logo_main_seriea.png?v=34")
-
-        for match in matches:
-            embedVar.add_field(name=f"{(datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=2)).strftime('%H:%M %d/%m/%Y') if match['status_code'] == 0 else f''':red_circle: LIVE {match['minute']}' ''' if match['status_code'] == 1 else ':clock10: Primo Tempo' if match['status_code'] == 11 else 'Partita Terminata'}", value=f"{str(discord.utils.get(client.emojis, name=match['home_team']['short_code']))} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['home_team']['name']} {f'''{match['stats']['home_score']} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '} - {'**'if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}{'**' if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '} {str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))}", inline=False)
-
-        message = await client.get_channel(channelId).fetch_message(messageId)
-        await message.edit(embed = embedVar)
 
 
 @client.command(name='invite')
@@ -298,4 +288,5 @@ async def _help(ctx):
     await ctx.reply(embed=embedVar, mention_author=False)
 
 
-client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs')
+# client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs') # Good 
+client.run('ODg2MzkxMTA0Mjg1NTgxMzYy.YT06Cw.7ZLU3DkY6QF1_fROm9dDcq59LI0') # Test
