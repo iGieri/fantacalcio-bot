@@ -33,7 +33,7 @@ async def on_message(message):
 @client.event
 async def on_reaction_add(reaction, user):
     if user.id != client.user.id:
-        emojis = ["⬅️", "➡️", "🔄", "🕙"]
+        emojis = ["⬅️", "➡️", "🔄", "🕙", "🔁"]
         if str(reaction.emoji) == emojis[0]:
             await reaction.message.remove_reaction("⬅️", user)
             await reaction.message.remove_reaction("⬅️", client.user)
@@ -57,7 +57,10 @@ async def on_reaction_add(reaction, user):
             await reaction.message.remove_reaction("🕙", user)
             await reaction.message.remove_reaction("🕙", client.user)
             await match_now(reaction.message)
-            
+        
+        elif str(reaction.emoji) == emojis[4]:
+            await reaction.message.remove_reaction("🔁", user)
+            await standings_now(reaction.message)
         else:
             await reaction.remove(user)
 
@@ -80,6 +83,8 @@ async def _live(ctx, squadra):
         if rund['is_current']:
             my_round = rund
     
+    # Aggiustare input squadra nella richiesta
+
     req = requests.get(f'https://www.fantacalcio.it/api/live/{squadra}?g={rund["name"]}&i=16')
 
     title = ''
@@ -378,6 +383,100 @@ async def match_now(message):
     for emoji in emojis:
         await message.add_reaction(emoji)
 
+
+@client.command(name='standings')
+async def _standings(ctx):
+    params = (
+        ("season_id","2100"),
+    )
+    
+    standing_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/standings', headers=FOOTBALL_API_HEADERS, params=params).json()
+
+    
+
+    embedVar = discord.Embed(
+        title="Classifica Serie A TIM",
+        color=0x00197d
+    )
+
+    embedVar.set_thumbnail(url="https://www.legaseriea.it/assets/legaseriea/images/logo_main_seriea.png?v=34")
+
+    for team in standing_req['data']['standings']:
+        team_data = {}
+
+        params = (
+            ("country_id", "62"),
+        )
+
+        teams_req = requests.get(f'https://app.sportdataapi.com/api/v1/soccer/teams/{team["team_id"]}', headers=FOOTBALL_API_HEADERS, params=params).json()
+
+        team_data = teams_req['data']
+
+        logo_stand = ''
+
+        if team['position'] == 1:
+            logo_stand = 'scudetto'
+        elif team['result'] == 'Champions League':
+            logo_stand = 'champions'
+        elif team['result'] == 'Europa League':
+            logo_stand = 'europa'
+        elif team['result'] == 'Conference League Qualification':
+            logo_stand = 'conference'
+        elif team['result'] == 'Relegation':
+            logo_stand = 'serieb'
+
+        embedVar.add_field(name='\u200b', value=f"**{team['position']} {str(discord.utils.get(client.emojis, name=team_data['short_code']))} {team_data['name']} **  {team['points']} {str(discord.utils.get(client.emojis, name=logo_stand)) if logo_stand != '' else ''}", inline=False)
+
+    message = await ctx.reply(embed=embedVar, mention_author=False)
+
+    emojis = ["🔁"]
+
+    for emoji in emojis:
+        await message.add_reaction(emoji)
+
+async def standings_now(message):
+    params = (
+        ("season_id","2100"),
+    )
+    
+    standing_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/standings', headers=FOOTBALL_API_HEADERS, params=params).json()
+
+    
+
+    embedVar = discord.Embed(
+        title="Classifica Serie A TIM",
+        color=0x00197d
+    )
+
+    embedVar.set_thumbnail(url="https://www.legaseriea.it/assets/legaseriea/images/logo_main_seriea.png?v=34")
+
+    for team in standing_req['data']['standings']:
+        team_data = {}
+
+        params = (
+            ("country_id", "62"),
+        )
+
+        teams_req = requests.get(f'https://app.sportdataapi.com/api/v1/soccer/teams/{team["team_id"]}', headers=FOOTBALL_API_HEADERS, params=params).json()
+
+        team_data = teams_req['data']
+
+        logo_stand = ''
+
+        if team['position'] == 1:
+            logo_stand = 'scudetto'
+        elif team['result'] == 'Champions League':
+            logo_stand = 'champions'
+        elif team['result'] == 'Europa League':
+            logo_stand = 'europa'
+        elif team['result'] == 'Conference League Qualification':
+            logo_stand = 'conference'
+        elif team['result'] == 'Relegation':
+            logo_stand = 'serieb'
+
+        embedVar.add_field(name='\u200b', value=f"**{team['position']} {str(discord.utils.get(client.emojis, name=team_data['short_code']))} {team_data['name']} **  {team['points']} {str(discord.utils.get(client.emojis, name=logo_stand)) if logo_stand != '' else ''}", inline=False)
+
+    message = await message.edit(embed=embedVar, mention_author=False)
 
 @client.command(name='invite')
 async def _invite(ctx):
