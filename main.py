@@ -61,8 +61,7 @@ async def on_reaction_add(reaction, user):
         elif str(reaction.emoji) == emojis[4]:
             await reaction.message.remove_reaction("🔁", user)
             await standings_now(reaction.message)
-        else:
-            await reaction.remove(user)
+        
 
 @client.command(name='live')
 async def _live(ctx, squadra):
@@ -85,7 +84,7 @@ async def _live(ctx, squadra):
     
     # Aggiustare input squadra nella richiesta
 
-    req = requests.get(f'https://www.fantacalcio.it/api/live/{squadra}?g={rund["name"]}&i=16')
+    n_team = 0
 
     title = ''
     logo = ''
@@ -94,71 +93,91 @@ async def _live(ctx, squadra):
         title = 'Atalanta :black_circle::blue_circle:'
         color = 0x0034ad
         logo = 'https://cdn.sportdataapi.com/images/soccer/teams/100/109.png'
+        n_team = 1
     elif squadra == 'Bologna':
         title = 'Bologna :red_circle::blue_circle:'
         color = 0xad0031
         logo = 'https://cdn.sportdataapi.com/images/soccer/teams/100/400.png'
+        n_team = 2
     elif squadra == 'Empoli':
         title = 'Empoli :blue_circle:'
         color = 0x0045ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/2345.png"
+        n_team = 5
     elif squadra == 'Fiorentina':
         title = 'Fiorentina :purple_circle:'
         color = 0x5c00ad
         logo = 'https://cdn.sportdataapi.com/images/soccer/teams/100/389.png'
+        n_team = 6
     elif squadra == 'Genoa':
         title = 'Genoa :red_circle::blue_circle:'
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/402.png"
+        n_team = 8
     elif squadra == 'Inter':
         title = 'Inter :black_circle::blue_circle:'
         color = 0x0034ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/94.png"
+        n_team = 9
     elif squadra == 'Juventus':
         title = 'Juventus :white_circle::black_circle:'
         color = 0xbfbfbf
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/108.png"
+        n_team = 10
     elif squadra == 'Lazio':
         title = 'Lazio :blue_circle::white_circle:'
         color = 0x0088c2
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/398.png"
+        n_team = 11
     elif squadra == 'Milan':
         title = 'Milan :red_circle::black_circle:'
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/391.png"
+        n_team = 12
     elif squadra == 'Napoli':
         title = 'Napoli :blue_circle:'
         color = 0x0034ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/102.png"
+        n_team = 13
     elif squadra == 'Roma':
         title = 'Roma :orange_circle::red_circle:'
         color = 0xd46a00
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/401.png"
+        n_team = 15
     elif squadra == 'Sampdoria':
         title = 'Sampdoria :blue_circle::white_circle::red_circle:'
         color = 0x0034ad
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/397.png"
+        n_team = 16
     elif squadra == 'Sassuolo':
         title = 'Sassuolo :green_circle::black_circle:'
         color = 0x00a838
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/394.png"
+        n_team = 17
     elif squadra == 'Torino':
         title = 'Torino :brown_circle:'
         color = 0x913000
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/393.png"
+        n_team = 18
     elif squadra == 'Udinese':
         title = 'Udinese :black_circle::white_circle:'
         color = 0xbfbfbf
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/390.png"
+        n_team = 19
     elif squadra == 'Verona':
         title = 'Verona :yellow_circle::blue_circle:'
         color = 0xd4e300
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/399.png"
+        n_team = 20
     elif squadra == 'Cagliari':
         title = 'Cagliari :red_circle::blue_circle:'
         color = 0xad0031
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/395.png"
+        n_team = 21
     
+
+    req = requests.get(f'https://www.fantacalcio.it/api/live/{n_team}?g={rund["name"]}&i=16')
+
     description = '*'
 
     if req.json() == []:
