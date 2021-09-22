@@ -524,8 +524,9 @@ async def _help(ctx):
 
     embedVar.add_field(name='f!help', value='Elenco di tutti i comandi disponibili')
     embedVar.add_field(name='f!invite', value='Link per invitare il bot nel proprio server')
-    embedVar.add_field(name='f!live <squadra>', value='Mostra i voti live della squadra selezionata')
+    embedVar.add_field(name='f!live <squadra>', value='N.A.')
     embedVar.add_field(name='f!matches', value='Mostra i risultati in diretta della giornata corrente')
+    embedVar.add_field(name='f!standings', value='Mostra la classifica di Serie A TIM in diretta')
     embedVar.add_field(name='f!team', value='Soon...')
     embedVar.add_field(name='f!player', value='Soon...')
     
