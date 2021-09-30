@@ -61,7 +61,6 @@ async def on_reaction_add(reaction, user):
         elif str(reaction.emoji) == emojis[4]:
             await reaction.message.remove_reaction("🔁", user)
             await standings_now(reaction.message)
-        
 
 @client.command(name='live')
 async def _live(ctx, squadra):
@@ -176,9 +175,12 @@ async def _live(ctx, squadra):
         n_team = 21
     
 
-    req = requests.get(f'https://www.fantacalcio.it/api/live/{n_team}?g={rund["name"]}&i=16')
+    req = requests.get(f'https://www.fantacalcio.it/api/live/{n_team}?g={int(my_round["name"])}&i=16')
+
 
     description = '*'
+
+    print(req.json())
 
     if req.json() == []:
         description += 'Non sono ancora disponibili i dati della '
@@ -193,7 +195,7 @@ async def _live(ctx, squadra):
     
     embedVar.set_thumbnail(url=logo)
 
-    if req.json() == []:
+    if req.json() != []:
 
         for player in req.json():
             
@@ -252,7 +254,6 @@ async def _live(ctx, squadra):
 
     await ctx.reply(embed=embedVar, mention_author=False)
 
-
 @client.command(name='matches')
 async def _matches(ctx):
 
@@ -289,7 +290,6 @@ async def _matches(ctx):
 
     for emoji in emojis:
         await message.add_reaction(emoji)
-
 
 async def match_back(message):
     my_round = {}
@@ -401,7 +401,6 @@ async def match_now(message):
 
     for emoji in emojis:
         await message.add_reaction(emoji)
-
 
 @client.command(name='standings')
 async def _standings(ctx):
@@ -527,8 +526,7 @@ async def _help(ctx):
     embedVar.add_field(name='f!live <squadra>', value='N.A.')
     embedVar.add_field(name='f!matches', value='Mostra i risultati in diretta della giornata corrente')
     embedVar.add_field(name='f!standings', value='Mostra la classifica di Serie A TIM in diretta')
-    embedVar.add_field(name='f!team', value='Soon...')
-    embedVar.add_field(name='f!player', value='Soon...')
+    embedVar.add_field(name='f!marcatori', value='Soon...')
     
     await ctx.reply(embed=embedVar, mention_author=False)
 
