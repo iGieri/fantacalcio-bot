@@ -13,11 +13,12 @@ import discord
 from discord.ext import commands
 import requests
 import datetime
-from dotenv import dotenv_values
+from dotenv import load_dotenv
+import os
 
-config = dotenv_values(".env")
+load_dotenv()
 
-FOOTBALL_API_HEADERS = {"apikey": config['FOOTBALL_API_KEY']}
+FOOTBALL_API_HEADERS = {"apikey": os.environ['FOOTBALL_API_KEY']}
 
 # Initializing the bot
 client = commands.Bot(command_prefix="f!")
@@ -570,5 +571,5 @@ async def _help(ctx):
     await ctx.reply(embed=embedVar, mention_author=False)
 
 
-client.run(config['PRODUCTION_TOKEN']) # Production 
-# client.run(config['TEST_BOT_TOKEN']) # Test
+client.run(os.environ['PRODUCTION_TOKEN']) # Production 
+# client.run(os.environ['TEST_BOT_TOKEN']) # Test
