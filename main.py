@@ -13,27 +13,38 @@ import discord
 from discord.ext import commands
 import requests
 import datetime
+from dotenv import dotenv_values
 
-FOOTBALL_API_HEADERS = {"apikey": "471a2be0-1178-11ec-aa3b-6d04c0326cac"}
+config = dotenv_values(".env")
 
+FOOTBALL_API_HEADERS = {"apikey": config['FOOTBALL_API_KEY']}
 
+# Initializing the bot
 client = commands.Bot(command_prefix="f!")
 client.remove_command("help")
 
 @client.event
 async def on_ready():
+    # Log in bot
     await client.change_presence(status=discord.Status.idle, activity=discord.Game('f!help'))
     print(f'Logged on as 🧙⚽🤖#2397')
 
 @client.event
 async def on_message(message):
+    # Bot messagges processing
     print(f'Message from {message.author}: {message.content}')  
     await client.process_commands(message)
 
 @client.event
 async def on_reaction_add(reaction, user):
+
+    # Reaction Manager
     if user.id != client.user.id:
         emojis = ["⬅️", "➡️", "🔄", "🕙", "🔁"]
+        
+        # f!matches command
+
+        # Going Back
         if str(reaction.emoji) == emojis[0]:
             await reaction.message.remove_reaction("⬅️", user)
             await reaction.message.remove_reaction("⬅️", client.user)
@@ -41,7 +52,7 @@ async def on_reaction_add(reaction, user):
             await reaction.message.remove_reaction("🔄", client.user)
             await match_back(reaction.message)
             
-
+        # Going ahead
         elif str(reaction.emoji) == emojis[1]:
             await reaction.message.remove_reaction("➡️", user)
             await reaction.message.remove_reaction("⬅️", client.user)
@@ -49,21 +60,33 @@ async def on_reaction_add(reaction, user):
             await reaction.message.remove_reaction("🔄", client.user)
             await match_forward(reaction.message)
 
+        # Updating result
         elif str(reaction.emoji) == emojis[2]:
             await reaction.message.remove_reaction("🔄", user)
             await match_now(reaction.message)
         
+        # Back home
         elif str(reaction.emoji) == emojis[3]:
             await reaction.message.remove_reaction("🕙", user)
             await reaction.message.remove_reaction("🕙", client.user)
             await match_now(reaction.message)
         
+        # f!standings command
+
+        # Update standing
         elif str(reaction.emoji) == emojis[4]:
             await reaction.message.remove_reaction("🔁", user)
             await standings_now(reaction.message)
 
 @client.command(name='live')
 async def _live(ctx, squadra):
+
+    '''
+    Live command:
+
+    Get live points scored by all players from a specific team in the current matchday
+
+    '''
     
     actual = 0
 
@@ -75,18 +98,21 @@ async def _live(ctx, squadra):
         ("season_id","2100"),
     )
     
+    # Getting the current matchday
     rounds_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/rounds', headers=FOOTBALL_API_HEADERS, params=params).json()
 
     for rund in rounds_req['data']:
         if rund['is_current']:
             my_round = rund
     
-    # Aggiustare input squadra nella richiesta
+    
 
     n_team = 0
 
     title = ''
     logo = ''
+
+    # Getting all the information about the requested team
 
     if squadra == 'Atalanta':
         title = 'Atalanta :black_circle::blue_circle:'
@@ -174,13 +200,11 @@ async def _live(ctx, squadra):
         logo = "https://cdn.sportdataapi.com/images/soccer/teams/100/395.png"
         n_team = 21
     
-
+    # Requesting player points
     req = requests.get(f'https://www.fantacalcio.it/api/live/{n_team}?g={int(my_round["name"])}&i=16')
 
-
+    # Formatting the message and the relative embed
     description = '*'
-
-    print(req.json())
 
     if req.json() == []:
         description += 'Non sono ancora disponibili i dati della '
@@ -252,10 +276,18 @@ async def _live(ctx, squadra):
 
             embedVar.add_field(name="\u200b", value=f'{ruolo} {player["nome"][0]}{player["nome"][1:].lower()} - {"SV" if player["voto"] == 55.0 else player["voto"]} **{"SV" if player["voto"] == 55.0 else player["voto"]+bonus}** {eventi}', inline=False)
 
+    # Send everything
     await ctx.reply(embed=embedVar, mention_author=False)
 
 @client.command(name='matches')
 async def _matches(ctx):
+
+    '''
+    Matches command:
+    
+    Getting live data about the current Serie A TIM matchday
+
+    '''
 
     my_round = {}
 
@@ -263,17 +295,22 @@ async def _matches(ctx):
         ("season_id","2100"),
     )
     
+    # Requesting to the API all the data about the matches
     matches_req = requests.get('https://app.sportdataapi.com/api/v1/soccer/matches', headers=FOOTBALL_API_HEADERS, params=params).json()
 
     matches = []
 
+    # Getting the current matchday
     for match in matches_req['data']:
         if match['round']['is_current']:
             my_round = { 'name': match['round']['name'], 'id': match['round']['round_id'] }
             matches.append(match)
     
+    # Sorting the matches by time
     matches.sort(key=lambda match: datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S'))
 
+
+    # Message formatting
     embedVar = discord.Embed(
         title=f'{my_round["name"]}a Giornata di Serie A TIM',
         color=0x00197d
@@ -284,10 +321,12 @@ async def _matches(ctx):
     for match in matches:
         embedVar.add_field(name=f"{(datetime.datetime.strptime(match['match_start'], '%Y-%m-%d %H:%M:%S') + datetime.timedelta(hours=2)).strftime('%H:%M %d/%m/%Y') if match['status_code'] == 0 else f''':red_circle: LIVE {match['minute']}' ''' if match['status_code'] == 1 else ':clock10: Primo Tempo' if match['status_code'] == 11 else 'Partita Terminata'}", value=f"{str(discord.utils.get(client.emojis, name=match['home_team']['short_code']))} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['home_team']['name']} {f'''{match['stats']['home_score']} {'**'if match['stats']['home_score'] > match['stats']['away_score'] and match['status_code'] == 3 else ' '} - {'**'if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '}{match['stats']['away_score']}''' if match['status_code'] != 0 else ' - '} {match['away_team']['name']}{'**' if match['stats']['home_score'] < match['stats']['away_score'] and match['status_code'] == 3 else ' '} {str(discord.utils.get(client.emojis, name=match['away_team']['short_code']))}", inline=False)
 
+    # Send everything
     message = await ctx.reply(embed=embedVar, mention_author=False)
 
     emojis = ["⬅️", "➡️","🔄"]
 
+    # React to create the matches menu
     for emoji in emojis:
         await message.add_reaction(emoji)
 
@@ -531,5 +570,5 @@ async def _help(ctx):
     await ctx.reply(embed=embedVar, mention_author=False)
 
 
-client.run('ODgzNTAxMTE4ODYzMzIzMjE2.YTK2iQ.vHPwBOi-HGu0cLDfpAN9m_NBNQs') # Good 
-# client.run('ODg2MzkxMTA0Mjg1NTgxMzYy.YT06Cw.7ZLU3DkY6QF1_fROm9dDcq59LI0') # Test
+client.run(config['PRODUCTION_TOKEN']) # Production 
+# client.run(config['TEST_BOT_TOKEN']) # Test
