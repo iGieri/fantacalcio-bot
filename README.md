@@ -1,16 +1,5 @@
-<style>
-    .logo {
-        margin-bottom: 10px;
-    }
-
-    .discord {
-        position: relative;
-        top: 3px;
-    }
-</style>
-
 <div align="center">
-    <img src="fantacalcio.png" class="logo" width='100px' style='border-radius: 10px;' />
+    <img src="fantacalcio.png" class="logo" width='100px' />
     <h1>Fantacalcio Bot 🧙🤖⚽</h1>
     <strong>All you need for you fantasy football on a Discord Bot <img src="discord.png" class='discord' height='17px' /></strong>
     <h6>Made with ❤️ by me and the Open Source community</h6>
