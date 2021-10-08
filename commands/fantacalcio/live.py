@@ -3,17 +3,12 @@ import discord
 
 async def live(ctx, squadra, FOOTBALL_API_HEADERS):
     '''
-    
     Live command:
 
     Get live points scored by all players from a specific team in the current matchday
 
     '''
     
-    actual = 0
-
-    condition = True
-
     my_round = {}
 
     params = (
@@ -192,7 +187,7 @@ async def live(ctx, squadra, FOOTBALL_API_HEADERS):
                 elif evento == '22':
                     eventi += ':athletic_shoe: '
             
-            if not ':x: ' in eventi and player['ruolo'] == 'P':
+            if ':x: ' not in eventi and player['ruolo'] == 'P':
                 eventi += ':gloves: '
                 bonus += 1
 

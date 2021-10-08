@@ -1,6 +1,6 @@
 import discord
 
-async def help(ctx):
+async def help_function(ctx):
     embedVar = discord.Embed(
         title='Ecco tutti i comandi disponibili!',
         description='',
