@@ -3,7 +3,7 @@
 
 Fantacalcio Discord Bot
 
-made by Federico PyGera Gerardi
+made by Federico Gerardi
 
 
 """
