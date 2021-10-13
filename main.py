@@ -3,7 +3,7 @@
 
 Fantacalcio Discord Bot
 
-made by Federico PyGera Gerardi
+made with 💘 by Federico Gerardi
 
 
 """
@@ -17,8 +17,8 @@ from dotenv import load_dotenv
 import os
 from commands.fantacalcio.live import live
 from commands.presentation.invite import invite
-from commands.presentation.help import help
-from commands.results.matches import matches, match_back, match_forward, match_now
+from commands.presentation.help import help_function
+from commands.results.matches import matches_function as matches, match_back, match_forward, match_now
 from commands.results.standings import standings, standings_now
 
 load_dotenv()
@@ -33,7 +33,7 @@ client.remove_command("help")
 async def on_ready():
     # Log in bot
     await client.change_presence(status=discord.Status.idle, activity=discord.Game('f!help'))
-    print(f'Logged on as 🧙⚽🤖#2397')
+    print('Logged on as 🧙⚽🤖#2397')
 
 @client.event
 async def on_message(message):
@@ -103,7 +103,7 @@ async def _invite(ctx):
 
 @client.command(name='help')
 async def _help(ctx):
-    await help(ctx)
+    await help_function(ctx)
 
 
 client.run(os.environ['PRODUCTION_TOKEN']) # Production 
