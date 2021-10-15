@@ -10,7 +10,7 @@ made with 💘 by Federico Gerardi
 
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import requests
 import datetime
 from dotenv import load_dotenv
@@ -21,6 +21,7 @@ from commands.presentation.help import help_function
 from commands.results.matches import matches_function as matches, match_back, match_forward, match_now
 from commands.results.standings import standings, standings_now
 
+
 load_dotenv()
 
 FOOTBALL_API_HEADERS = {"apikey": os.environ['FOOTBALL_API_KEY']}
@@ -29,11 +30,20 @@ FOOTBALL_API_HEADERS = {"apikey": os.environ['FOOTBALL_API_KEY']}
 client = commands.Bot(command_prefix="f!")
 client.remove_command("help")
 
+@tasks.loop()
+async def sendData():
+    guild = client.get_guild(886727465026854912)
+
+    requests.post('http://localhost:8080/api/sendData', data={'servers': len(client.guilds), 'users': guild.member_count})
+
+
 @client.event
 async def on_ready():
     # Log in bot
     await client.change_presence(status=discord.Status.idle, activity=discord.Game('f!help'))
     print('Logged on as 🧙⚽🤖#2397')
+    sendData.start()
+
 
 @client.event
 async def on_message(message):
@@ -104,6 +114,7 @@ async def _invite(ctx):
 @client.command(name='help')
 async def _help(ctx):
     await help_function(ctx)
+
 
 
 client.run(os.environ['PRODUCTION_TOKEN']) # Production 
