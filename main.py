@@ -37,7 +37,6 @@ db = db_client.stats
 async def sendData():
     guild = client.get_guild(886727465026854912)
 
-    # requests.post('http://localhost:8080/api/sendData', data={'servers': len(client.guilds), 'users': guild.member_count})
     db.data.update_one({"_id": ObjectId("6169bf78386bbf78ac0e18f1")},{"$set": {'servers': len(client.guilds), 'users': guild.member_count}}, upsert=False)
 
 
