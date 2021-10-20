@@ -15,13 +15,13 @@ import requests
 import datetime
 from dotenv import load_dotenv
 import os
+from time import sleep
 from commands.fantacalcio.live import live
 from commands.presentation.invite import invite
 from commands.presentation.help import help_function
 from commands.results.matches import matches_function as matches, match_back, match_forward, match_now
 from commands.results.standings import standings, standings_now
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+
 
 load_dotenv()
 
@@ -30,14 +30,15 @@ FOOTBALL_API_HEADERS = {"apikey": os.environ['FOOTBALL_API_KEY']}
 # Initializing the bot
 client = commands.Bot(command_prefix="f!")
 client.remove_command("help")
-db_client = MongoClient(f"mongodb+srv://root:{os.environ['DB_PASSWORD']}@stats.bibxu.mongodb.net/?retryWrites=true&w=majority")
-db = db_client.stats
+
 
 @tasks.loop()
 async def sendData():
     guild = client.get_guild(886727465026854912)
 
-    db.data.update_one({"_id": ObjectId("6169bf78386bbf78ac0e18f1")},{"$set": {'servers': len(client.guilds), 'users': guild.member_count}}, upsert=False)
+    r = requests.post('http://localhost:8080/api/sendData', json={'servers': len(client.guilds), 'users': guild.member_count})
+
+    sleep(10)
 
 
 @client.event
