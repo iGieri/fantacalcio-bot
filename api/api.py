@@ -32,4 +32,4 @@ def receiveData():
 
     return 'Thank you'
 
-app.run("localhost", 8080, False)
+app.run("0.0.0.0", 8080, False)

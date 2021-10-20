@@ -36,7 +36,7 @@ client.remove_command("help")
 async def sendData():
     guild = client.get_guild(886727465026854912)
 
-    r = requests.post('http://localhost:8080/api/sendData', json={'servers': len(client.guilds), 'users': guild.member_count})
+    r = requests.post('http://0.0.0.0:8080/api/sendData', json={'servers': len(client.guilds), 'users': guild.member_count})
 
     sleep(10)
 
